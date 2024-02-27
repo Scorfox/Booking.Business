@@ -1,4 +1,4 @@
-#define dds_tests
+//#define dds_tests
 using Booking.Business.Application;
 using Booking.Business.Application.Consumers.Reservation;
 using Booking.Business.Application.Consumers.Table;
