@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Otus.Booking.Common.Booking.Contracts.Reservation.Models;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Requests;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Responses;
 
@@ -10,7 +11,9 @@ public sealed class ReservationMapper : Profile
     {
         CreateMap<CreateReservation, Domain.Entities.Reservation>();
         CreateMap<Domain.Entities.Reservation, CreateReservationResult>();
-        
+
+        CreateMap<Domain.Entities.Reservation, FullReservationDto>();
+
         CreateMap<UpdateReservation, Domain.Entities.Reservation>();
         CreateMap<Domain.Entities.Reservation, UpdateReservationResult>();
     }

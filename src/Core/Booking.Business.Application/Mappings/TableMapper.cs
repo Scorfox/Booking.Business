@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Otus.Booking.Common.Booking.Contracts.Table.Models;
 using Otus.Booking.Common.Booking.Contracts.Table.Requests;
 using Otus.Booking.Common.Booking.Contracts.Table.Responses;
 
@@ -10,7 +11,9 @@ public sealed class TableMapper : Profile
     {
         CreateMap<CreateTable, Domain.Entities.Table>();
         CreateMap<Domain.Entities.Table, CreateTableResult>();
-        
+
+        CreateMap<Domain.Entities.Table, FullTableDto>();
+
         CreateMap<UpdateTable, Domain.Entities.Table>();
         CreateMap<Domain.Entities.Table, UpdateTableResult>();
     }
