@@ -16,5 +16,8 @@ public sealed class TableMapper : Profile
 
         CreateMap<UpdateTable, Domain.Entities.Table>();
         CreateMap<Domain.Entities.Table, UpdateTableResult>();
+
+        CreateMap<GetTableId, Domain.Entities.Table>();
+        CreateMap<Domain.Entities.Table, FullTableDto>();
     }
 }
