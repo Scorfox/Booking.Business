@@ -6,8 +6,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <RootNamespace>Booking.Presentation</RootNamespace>
-        <AssemblyVersion>1.0.0227.20383</AssemblyVersion>
-        <FileVersion>1.0.0227.20383</FileVersion>
+        <AssemblyVersion>1.0.0301.23367</AssemblyVersion>
+        <FileVersion>1.0.0301.23367</FileVersion>
     </PropertyGroup>
 
     <ItemGroup>
