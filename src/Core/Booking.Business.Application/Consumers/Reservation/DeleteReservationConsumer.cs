@@ -1,21 +1,17 @@
-﻿using AutoMapper;
-using Booking.Business.Application.Repositories;
+﻿using Booking.Business.Application.Repositories;
 using MassTransit;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Requests;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Responses;
-using Otus.Booking.Common.Booking.Contracts.Table.Requests;
 
 namespace Booking.Business.Application.Consumers.Reservation
 {
     public class DeleteReservationConsumer : IConsumer<DeleteReservation>
     {
         private readonly IReservationRepository _reservationRepository;
-        private readonly IMapper _mapper;
 
-        public DeleteReservationConsumer(IReservationRepository reservationRepository, IMapper mapper)
+        public DeleteReservationConsumer(IReservationRepository reservationRepository)
         {
             _reservationRepository = reservationRepository;
-            _mapper = mapper;
         }
 
         public async Task Consume(ConsumeContext<DeleteReservation> context)

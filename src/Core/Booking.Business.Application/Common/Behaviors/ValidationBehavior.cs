@@ -1,6 +1,6 @@
-﻿using Booking.Business.Application.Exceptions;
-using FluentValidation;
+﻿using FluentValidation;
 using MediatR;
+using Otus.Booking.Common.Booking.Exceptions;
 
 namespace Booking.Business.Application.Common.Behaviors;
 

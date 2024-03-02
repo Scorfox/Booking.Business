@@ -22,10 +22,12 @@ namespace Booking.Business.Application.Consumers.Reservation
         {
             var request = context.Message;
 
-            var data = await _reservationRepository.GetReservationsList(request.Offset, request.Limit);
+            var reservations = await _reservationRepository.GetReservationsList(request.Offset, request.Limit);
 
             await context.RespondAsync(new GetReservationsListResult
-                {Reservations = data.Select(elm => _mapper.Map<FullReservationDto>(elm)).ToList()});
+            {
+                Reservations = _mapper.Map<List<FullReservationDto>>(reservations)
+            });
         }
     }
 }
