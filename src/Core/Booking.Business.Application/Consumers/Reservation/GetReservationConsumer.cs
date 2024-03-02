@@ -22,7 +22,7 @@ namespace Booking.Business.Application.Consumers.Reservation
             var request = context.Message;
 
             if (!await _reservationRepository.HasAnyByIdAsync(request.Id))
-                throw new BadRequestException($"Reservation with ID {request.Id} doesn't exists");
+                throw new NotFoundException($"Reservation with ID {request.Id} doesn't exists");
 
             await context.RespondAsync(_reservationRepository.FindByIdAsync(request.Id, default));
         }

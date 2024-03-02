@@ -22,7 +22,7 @@ namespace Booking.Business.Application.Consumers.Table
             var request = context.Message;
 
             if (!await _tableRepository.HasAnyByIdAsync(request.Id))
-                throw new BadRequestException($"Table with ID {request.Id} doesn't exists");
+                throw new NotFoundException($"Table with ID {request.Id} doesn't exists");
 
             await context.RespondAsync(_tableRepository.FindByIdAsync(request.Id, default));
         }
