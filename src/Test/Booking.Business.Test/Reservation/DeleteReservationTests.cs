@@ -21,7 +21,7 @@ namespace Booking.Business.Test.Reservation
 
             var reservationRepository = new ReservationRepository(DataContext);
 
-            Consumer = new DeleteReservationConsumer(reservationRepository, new Mapper(config));
+            Consumer = new DeleteReservationConsumer(reservationRepository);
         }
 
         [Test]
