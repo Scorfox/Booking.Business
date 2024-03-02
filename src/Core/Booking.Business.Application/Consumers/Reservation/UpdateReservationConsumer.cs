@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Booking.Business.Application.Exceptions;
 using Booking.Business.Application.Repositories;
 using MassTransit;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Requests;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Responses;
+using Otus.Booking.Common.Booking.Exceptions;
 
 namespace Booking.Business.Application.Consumers.Reservation;
 

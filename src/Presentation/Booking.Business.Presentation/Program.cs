@@ -15,20 +15,12 @@ builder.Services.AddMassTransit(x =>
     // Добавляем шину сообщений
     x.UsingRabbitMq((context, cfg) =>
     {
-#if true
-        cfg.Host(builder.Configuration["RabbitMQdds:Host"], h =>
-        {
-            h.Username(builder.Configuration["RabbitMQdds:Username"]);
-            h.Password(builder.Configuration["RabbitMQdds:Password"]);
-        });
-#else
         cfg.Host(builder.Configuration["RabbitMQ:Host"], h =>
         {
             h.Username(builder.Configuration["RabbitMQ:Username"]);
             h.Password(builder.Configuration["RabbitMQ:Password"]);
         });
-#endif
-
+        
         cfg.ConfigureEndpoints(context);
 
     });
