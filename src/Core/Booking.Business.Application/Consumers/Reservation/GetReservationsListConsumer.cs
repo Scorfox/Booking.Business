@@ -5,29 +5,28 @@ using Otus.Booking.Common.Booking.Contracts.Reservation.Models;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Requests;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Responses;
 
-namespace Booking.Business.Application.Consumers.Reservation
+namespace Booking.Business.Application.Consumers.Reservation;
+
+public class GetReservationsListConsumer:IConsumer <GetReservationsList>
 {
-    public class GetReservationsListConsumer:IConsumer <GetReservationsList>
+    private readonly IReservationRepository _reservationRepository;
+    private readonly IMapper _mapper;
+
+    public GetReservationsListConsumer(IReservationRepository reservationRepository, IMapper mapper)
     {
-        private readonly IReservationRepository _reservationRepository;
-        private readonly IMapper _mapper;
+        _reservationRepository = reservationRepository;
+        _mapper = mapper;
+    }
 
-        public GetReservationsListConsumer(IReservationRepository reservationRepository, IMapper mapper)
+    public async Task Consume(ConsumeContext<GetReservationsList> context)
+    {
+        var request = context.Message;
+
+        var reservations = await _reservationRepository.GetReservationsList(request.Offset, request.Limit);
+
+        await context.RespondAsync(new GetReservationsListResult
         {
-            _reservationRepository = reservationRepository;
-            _mapper = mapper;
-        }
-
-        public async Task Consume(ConsumeContext<GetReservationsList> context)
-        {
-            var request = context.Message;
-
-            var reservations = await _reservationRepository.GetReservationsList(request.Offset, request.Limit);
-
-            await context.RespondAsync(new GetReservationsListResult
-            {
-                Reservations = _mapper.Map<List<FullReservationDto>>(reservations)
-            });
-        }
+            Reservations = _mapper.Map<List<FullReservationDto>>(reservations)
+        });
     }
 }
