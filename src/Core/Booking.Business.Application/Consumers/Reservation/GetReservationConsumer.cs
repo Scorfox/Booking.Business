@@ -2,6 +2,7 @@
 using Booking.Business.Application.Repositories;
 using MassTransit;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Requests;
+using Otus.Booking.Common.Booking.Contracts.Reservation.Responses;
 using Otus.Booking.Common.Booking.Exceptions;
 
 namespace Booking.Business.Application.Consumers.Reservation;
@@ -21,9 +22,11 @@ public sealed class GetReservationConsumer : IConsumer<GetReservationId>
     {
         var request = context.Message;
 
-        if (!await _reservationRepository.HasAnyByIdAsync(request.Id))
+        var reservation = _reservationRepository.FindByIdAsync(request.Id);
+
+        if (reservation == null)
             throw new NotFoundException($"Reservation with ID {request.Id} doesn't exists");
 
-        await context.RespondAsync(_reservationRepository.FindByIdAsync(request.Id, default));
+        await context.RespondAsync(_mapper.Map<GetReservationResult>(reservation));
     }
 }
