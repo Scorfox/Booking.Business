@@ -48,7 +48,7 @@ namespace Booking.Business.Test.Table
 
             var request = Fixture.Create<GetTablesList>();
             request.Offset = 0;
-            request.Limit = 3;
+            request.Count = 3;
             // Act
             await testHarness.InputQueueSendEndpoint.Send(request);
             var result = testHarness.Published.Select<GetTablesListResult>().FirstOrDefault()?.Context.Message;
@@ -58,7 +58,7 @@ namespace Booking.Business.Test.Table
                 Assert.That(testHarness.Consumed.Select<GetTablesList>().Any(), Is.True);
                 Assert.That(consumerHarness.Consumed.Select<GetTablesList>().Any(), Is.True);
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result.Tables.Count, Is.EqualTo(3));
+                Assert.That(result.Elements.Count, Is.EqualTo(3));
             });
 
             await testHarness.Stop();

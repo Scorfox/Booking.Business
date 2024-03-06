@@ -21,13 +21,17 @@ public class TableRepository(DataContext context) : BaseRepository<Table>(contex
             .AnyAsync(x => x.FilialId == filialId && x.Name.ToLower() == name.ToLower() && x.Id != id, token);
     }
 
-    public async Task<List<Table>> GetTablesList(int offset, int limit, CancellationToken token = default)
+    public async Task<Tuple<List<Table>, int>> GetTablesList(int offset, int limit, CancellationToken token = default)
     {
-        return await Context.Tables.AsNoTracking().Skip(offset).Take(limit).ToListAsync(token);
+        int count = await Context.Tables.CountAsync(token);
+        return new Tuple<List<Table>, int>(await Context.Tables.AsNoTracking().Skip(offset).Take(limit).ToListAsync(token), count);
     }
 
     public async Task DeleteTable(Guid id, CancellationToken cancellationToken = default)
     {
-        await Context.Tables.AsNoTracking().Where(elm=>elm.Id == id).ExecuteDeleteAsync(cancellationToken);
+        bool any = await Context.Tables.AnyAsync(elm => elm.Id == id, cancellationToken);
+
+        if(any)
+            await Context.Tables.AsNoTracking().Where(elm=>elm.Id == id).ExecuteDeleteAsync(cancellationToken);
     }
 }

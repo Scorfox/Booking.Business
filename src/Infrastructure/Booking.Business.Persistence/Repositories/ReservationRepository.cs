@@ -7,13 +7,15 @@ namespace Booking.Business.Persistence.Repositories;
 
 public class ReservationRepository(DataContext context) : BaseRepository<Reservation>(context), IReservationRepository
 {
-    public async Task<List<Reservation>> GetReservationsList(int offset, int limit, CancellationToken cancellationToken = default)
+    public async Task<Tuple<List<Reservation>, int>> GetReservationsList(int offset, int limit, CancellationToken cancellationToken = default)
     {
-        return await Context.Reservations.AsNoTracking().Skip(offset).Take(limit).ToListAsync(cancellationToken);
+        return new Tuple<List<Reservation>, int>(await Context.Reservations.AsNoTracking().Skip(offset).Take(limit).ToListAsync(cancellationToken), await Context.Reservations.CountAsync(cancellationToken));
     }
 
     public async Task DeleteReservation(Guid id, CancellationToken cancellationToken)
     {
-        await Context.Reservations.AsNoTracking().Where(elm => elm.Id == id).ExecuteDeleteAsync(cancellationToken);
+        bool any = await Context.Reservations.AnyAsync(elm => elm.Id == id, cancellationToken);
+        if(any)
+            await Context.Reservations.AsNoTracking().Where(elm => elm.Id == id).ExecuteDeleteAsync(cancellationToken);
     }
 }
