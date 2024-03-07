@@ -27,7 +27,7 @@ public class GetReservationsListConsumer:IConsumer <GetReservationsList>
         await context.RespondAsync(new GetReservationsListResult
         {
             Elements = _mapper.Map<List<FullReservationDto>>(reservations), 
-            TotalCount = totalCount
+            TotalCount = totalCount 
         });
     }
 }
