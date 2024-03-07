@@ -23,11 +23,11 @@ public class GetReservationsListConsumer:IConsumer <GetReservationsList>
         var request = context.Message;
 
         var reservations = await _reservationRepository.GetReservationsList(request.Offset, request.Count);
-
+        var totalCount = await _reservationRepository.GetReservationsTotalCount();
         await context.RespondAsync(new GetReservationsListResult
         {
-            Elements = _mapper.Map<List<FullReservationDto>>(reservations.Item1), 
-            TotalCount = reservations.Item2
+            Elements = _mapper.Map<List<FullReservationDto>>(reservations), 
+            TotalCount = totalCount
         });
     }
 }

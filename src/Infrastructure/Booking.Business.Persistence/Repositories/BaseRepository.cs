@@ -48,4 +48,14 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
     {
         return await Context.Set<T>().ToListAsync(cancellationToken);
     }
+
+    public async Task<List<T>> GetPaginatedListAsync(int offset, int count, CancellationToken token)
+    {
+        return await Context.Set<T>().Skip(offset).Take(count).ToListAsync(token);
+    }
+
+    public async Task<int> GetTotalCount(CancellationToken token)
+    {
+        return await Context.Set<T>().CountAsync(token);
+    }
 }

@@ -7,10 +7,12 @@ namespace Booking.Business.Persistence.Repositories;
 
 public class ReservationRepository(DataContext context) : BaseRepository<Reservation>(context), IReservationRepository
 {
-    public async Task<Tuple<List<Reservation>, int>> GetReservationsList(int offset, int limit, CancellationToken cancellationToken = default)
-    {
-        return new Tuple<List<Reservation>, int>(await Context.Reservations.AsNoTracking().Skip(offset).Take(limit).ToListAsync(cancellationToken), await Context.Reservations.CountAsync(cancellationToken));
-    }
+    public async Task<List<Reservation>> GetReservationsList(int offset, int limit,
+        CancellationToken cancellationToken = default)
+        => await base.GetPaginatedListAsync(offset, limit, cancellationToken);
+
+    public async Task<int> GetReservationsTotalCount(CancellationToken cancellationToken = default)
+        => await base.GetTotalCount(cancellationToken);
 
     public async Task DeleteReservation(Guid id, CancellationToken cancellationToken)
     {
