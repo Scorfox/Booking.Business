@@ -20,14 +20,4 @@ public class TableRepository(DataContext context) : BaseRepository<Table>(contex
             .AsNoTracking()
             .AnyAsync(x => x.FilialId == filialId && x.Name.ToLower() == name.ToLower() && x.Id != id, token);
     }
-
-
-
-    public async Task DeleteTable(Guid id, CancellationToken cancellationToken = default)
-    {
-        bool any = await Context.Tables.AnyAsync(elm => elm.Id == id, cancellationToken);
-
-        if(any)
-            await Context.Tables.AsNoTracking().Where(elm=>elm.Id == id).ExecuteDeleteAsync(cancellationToken);
-    }
 }

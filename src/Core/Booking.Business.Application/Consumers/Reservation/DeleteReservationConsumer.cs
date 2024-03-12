@@ -2,6 +2,7 @@
 using MassTransit;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Requests;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Responses;
+using Otus.Booking.Common.Booking.Exceptions;
 
 namespace Booking.Business.Application.Consumers.Reservation;
 
@@ -18,7 +19,12 @@ public class DeleteReservationConsumer : IConsumer<DeleteReservation>
     {
         var request = context.Message;
 
-        await _reservationRepository.DeleteReservation(request.Id);
+        var reservation = await _reservationRepository.FindByIdAsync(request.Id);
+        
+        if (reservation == null)
+            throw new NotFoundException($"Reservation with ID {request.Id} doesn't exists");
+        
+        await _reservationRepository.Delete(reservation);
 
         await context.RespondAsync(new DeleteReservationResult());
     }
