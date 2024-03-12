@@ -2,23 +2,25 @@
 using AutoMapper;
 using Booking.Business.Application.Consumers.Table;
 using Booking.Business.Application.Mappings;
+using Booking.Business.Application.Repositories;
 using Booking.Business.Persistence.Repositories;
 using MassTransit.Testing;
-using Otus.Booking.Common.Booking.Contracts.Filial.Requests;
 using Otus.Booking.Common.Booking.Contracts.Table.Requests;
+using Otus.Booking.Common.Booking.Contracts.Table.Responses;
 
 namespace Booking.Business.Test.Table
 {
     public class GetTableTests : BaseTest
     {
         private GetTableConsumer Consumer { get; }
+        private ITableRepository TableRepository { get; }
 
         public GetTableTests()
         {
             var config = new MapperConfiguration(cfg => cfg.AddProfile<TableMapper>());
 
-            var tableRepository = new TableRepository(DataContext);
-            Consumer = new GetTableConsumer(tableRepository, new Mapper(config));
+            TableRepository = new TableRepository(DataContext);
+            Consumer = new GetTableConsumer(TableRepository, new Mapper(config));
         }
 
         [Test]
@@ -26,11 +28,13 @@ namespace Booking.Business.Test.Table
         {
             // Arrange
             var testHarness = new InMemoryTestHarness();
-            var consumerHarness = testHarness.Consumer(() => Consumer);
-            Guid id = Guid.NewGuid();
+            testHarness.Consumer(() => Consumer);
 
-            var request = Fixture.Create<GetTableId>();
-            request.Id = id;
+            var table = Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create();
+            await TableRepository.CreateAsync(table);
+            
+            var request = Fixture.Create<GetTableById>();
+            request.Id = table.Id;
 
             await testHarness.Start();
 
@@ -40,8 +44,8 @@ namespace Booking.Business.Test.Table
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(testHarness.Consumed.Select<GetTableId>().Any(), Is.True);
-                Assert.That(consumerHarness.Consumed.Select<GetTableId>().Any(), Is.True);
+                Assert.That(testHarness.Consumed.Select<GetTableById>().Any(), Is.True);
+                Assert.That(testHarness.Published.Select<GetTableResult>().Any(), Is.True);
             });
 
             await testHarness.Stop();
