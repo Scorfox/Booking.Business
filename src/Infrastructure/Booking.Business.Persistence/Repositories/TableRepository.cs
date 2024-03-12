@@ -21,11 +21,7 @@ public class TableRepository(DataContext context) : BaseRepository<Table>(contex
             .AnyAsync(x => x.FilialId == filialId && x.Name.ToLower() == name.ToLower() && x.Id != id, token);
     }
 
-    public async Task<List<Table>> GetTablesList(int offset, int limit, CancellationToken token = default)
-        => await base.GetPaginatedListAsync(offset, limit, token);
 
-    public async Task<int> GetTablesTotalCount(CancellationToken token = default)
-        => await base.GetTotalCount(token);
 
     public async Task DeleteTable(Guid id, CancellationToken cancellationToken = default)
     {

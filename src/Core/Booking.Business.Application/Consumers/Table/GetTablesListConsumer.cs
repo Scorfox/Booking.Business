@@ -22,8 +22,8 @@ public class GetTablesListConsumer:IConsumer<GetTablesList>
     {
         var request = context.Message;
 
-        var tables = await _tableRepository.GetTablesList(request.Offset, request.Count);
-        var totalCount = await _tableRepository.GetTablesTotalCount();
+        var tables = await _tableRepository.GetPaginatedListAsync(request.Offset, request.Count);
+        var totalCount = await _tableRepository.GetTotalCount();
         var values = new GetTablesListResult
         {
             Elements = _mapper.Map<List<FullTableDto>>(tables), TotalCount = totalCount

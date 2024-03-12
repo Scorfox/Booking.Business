@@ -22,8 +22,8 @@ public class GetReservationsListConsumer:IConsumer <GetReservationsList>
     {
         var request = context.Message;
 
-        var reservations = await _reservationRepository.GetReservationsList(request.Offset, request.Count);
-        var totalCount = await _reservationRepository.GetReservationsTotalCount();
+        var reservations = await _reservationRepository.GetPaginatedListAsync(request.Offset, request.Count);
+        var totalCount = await _reservationRepository.GetTotalCount();
         await context.RespondAsync(new GetReservationsListResult
         {
             Elements = _mapper.Map<List<FullReservationDto>>(reservations), 
