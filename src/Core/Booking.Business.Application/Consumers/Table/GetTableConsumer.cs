@@ -22,7 +22,7 @@ public sealed class GetTableConsumer : IConsumer<GetTableById>
     {
         var request = context.Message;
 
-        var table = _tableRepository.FindByIdAsync(request.Id);
+        var table = await _tableRepository.FindByIdAsync(request.Id);
 
         if (table == null)
             throw new NotFoundException($"Table with ID {request.Id} doesn't exists");

@@ -1,10 +1,6 @@
-﻿using AutoFixture;
-using AutoMapper;
+﻿using AutoMapper;
 using Booking.Business.Application.Consumers.Reservation;
 using Booking.Business.Application.Mappings;
-using Booking.Business.Persistence.Context;
-using Booking.Business.Persistence.Repositories;
-using MassTransit.Testing;
 
 
 namespace Booking.Business.Test.Reservation

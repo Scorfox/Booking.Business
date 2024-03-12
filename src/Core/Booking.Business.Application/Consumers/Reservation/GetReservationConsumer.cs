@@ -22,7 +22,7 @@ public sealed class GetReservationConsumer : IConsumer<GetReservationById>
     {
         var request = context.Message;
 
-        var reservation = _reservationRepository.FindByIdAsync(request.Id);
+        var reservation = await _reservationRepository.FindByIdAsync(request.Id);
 
         if (reservation == null)
             throw new NotFoundException($"Reservation with ID {request.Id} doesn't exists");
