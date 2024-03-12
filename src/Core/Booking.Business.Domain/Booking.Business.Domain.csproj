@@ -5,8 +5,8 @@
         <RootNamespace>Booking.Business.Domain</RootNamespace>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyVersion>1.0.0301.23367</AssemblyVersion>
-        <FileVersion>1.0.0301.23367</FileVersion>
+        <AssemblyVersion>1.0.0312.12157</AssemblyVersion>
+        <FileVersion>1.0.0312.12157</FileVersion>
     </PropertyGroup>
 
 </Project>

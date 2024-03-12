@@ -22,11 +22,12 @@ public class GetReservationsListConsumer:IConsumer <GetReservationsList>
     {
         var request = context.Message;
 
-        var reservations = await _reservationRepository.GetReservationsList(request.Offset, request.Limit);
-
+        var reservations = await _reservationRepository.GetPaginatedListAsync(request.Offset, request.Count);
+        
         await context.RespondAsync(new GetReservationsListResult
         {
-            Reservations = _mapper.Map<List<FullReservationDto>>(reservations)
+            Elements = _mapper.Map<List<FullReservationDto>>(reservations), 
+            TotalCount = await _reservationRepository.GetTotalCount() 
         });
     }
 }

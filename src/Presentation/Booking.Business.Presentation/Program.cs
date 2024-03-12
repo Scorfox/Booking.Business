@@ -1,4 +1,3 @@
-//#define dds_tests
 using Booking.Business.Application;
 using Booking.Business.Application.Consumers.Reservation;
 using Booking.Business.Application.Consumers.Table;
@@ -25,12 +24,19 @@ builder.Services.AddMassTransit(x =>
 
     });
         // Table
-        x.AddConsumer<CreateTableConsumer>();
+    x.AddConsumer<CreateTableConsumer>();
     x.AddConsumer<UpdateTableConsumer>();
-    
+    x.AddConsumer<DeleteTableConsumer>();
+    x.AddConsumer<GetTableConsumer>();
+    x.AddConsumer<GetTablesListConsumer>();
+
+
     // Reservation
     x.AddConsumer<CreateReservationConsumer>();
     x.AddConsumer<UpdateReservationConsumer>();
+    x.AddConsumer<DeleteReservationConsumer>();
+    x.AddConsumer<GetReservationConsumer>();
+    x.AddConsumer<GetReservationsListConsumer>();
 });
 
 var app = builder.Build();

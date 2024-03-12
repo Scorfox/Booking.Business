@@ -22,11 +22,14 @@ public class GetTablesListConsumer:IConsumer<GetTablesList>
     {
         var request = context.Message;
 
-        var tables = await _tableRepository.GetTablesList(request.Offset, request.Limit);
-
-        await context.RespondAsync(new GetTablesListResult
+        var tables = await _tableRepository.GetPaginatedListAsync(request.Offset, request.Count);
+        
+        var values = new GetTablesListResult
         {
-            Tables = _mapper.Map<List<FullTableDto>>(tables)
-        });
+            Elements = _mapper.Map<List<FullTableDto>>(tables), 
+            TotalCount = await _tableRepository.GetTotalCount()
+        };
+
+        await context.RespondAsync(values);
     }
 }
