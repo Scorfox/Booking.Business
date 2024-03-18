@@ -26,12 +26,15 @@ public class UpdateTableTests : BaseTest
     public async Task UpdateTable_ReturnsSuccess()
     {
         // Arrange
+        var companyId = Guid.NewGuid();
         var table = Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create();
+        table.CompanyId = companyId;
         await DataContext.Tables.AddAsync(table);
         await DataContext.SaveChangesAsync();
         
         var request = Fixture.Create<UpdateTable>();
         request.Id = table.Id;
+        request.CompanyId = companyId;
         
         var testHarness = new InMemoryTestHarness();
         var consumerHarness = testHarness.Consumer(() => Consumer);

@@ -19,7 +19,7 @@ public class CreateTableTests : BaseTest
         var config = new MapperConfiguration(cfg => cfg.AddProfile<TableMapper>());
         
         var tableRepository = new TableRepository(DataContext);
-        Consumer = new CreateTableConsumer(tableRepository, new Mapper(config));
+        Consumer = new CreateTableConsumer(new Mapper(config), tableRepository);
     }
 
     [Test]

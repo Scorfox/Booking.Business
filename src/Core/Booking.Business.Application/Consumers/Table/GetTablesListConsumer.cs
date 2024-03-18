@@ -26,7 +26,7 @@ public class GetTablesListConsumer:IConsumer<GetTablesList>
         
         var values = new GetTablesListResult
         {
-            Elements = _mapper.Map<List<FullTableDto>>(tables), 
+            Elements = _mapper.Map<List<TableGettingDto>>(tables), 
             TotalCount = await _tableRepository.GetTotalCount()
         };
 

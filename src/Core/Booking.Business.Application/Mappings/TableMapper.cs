@@ -12,11 +12,11 @@ public sealed class TableMapper : Profile
         CreateMap<CreateTable, Domain.Entities.Table>();
         CreateMap<Domain.Entities.Table, CreateTableResult>();
 
-        CreateMap<Domain.Entities.Table, FullTableDto>();
+        CreateMap<Domain.Entities.Table, GetTableResult>();
 
         CreateMap<UpdateTable, Domain.Entities.Table>();
         CreateMap<Domain.Entities.Table, UpdateTableResult>();
 
-        CreateMap<Domain.Entities.Table, GetTableResult>();
+        CreateMap<Domain.Entities.Table, TableGettingDto>();
     }
 }

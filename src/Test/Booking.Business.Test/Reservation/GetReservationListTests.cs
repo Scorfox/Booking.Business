@@ -26,7 +26,7 @@ namespace Booking.Business.Test.Reservation
 
             var reservationRepository = new ReservationRepository(DataContext);
             
-            Consumer = new GetReservationsListConsumer(reservationRepository, new Mapper(config));
+            Consumer = new GetReservationsListConsumer(new Mapper(config), reservationRepository);
         }
 
         [Test]

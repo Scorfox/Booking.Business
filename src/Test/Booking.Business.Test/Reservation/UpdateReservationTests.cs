@@ -20,22 +20,25 @@ public class UpdateReservationTests : BaseTest
         
         var reservationRepository = new ReservationRepository(DataContext);
         var tableRepository = new TableRepository(DataContext);
-        Consumer = new UpdateReservationConsumer(reservationRepository, tableRepository, new Mapper(config));
+        Consumer = new UpdateReservationConsumer(new Mapper(config), reservationRepository, tableRepository);
     }
 
     [Test]
     public async Task UpdateReservation_ReturnsSuccess()
     {
         // Arrange
+        var companyId = Guid.NewGuid();
         var reservation = Fixture.Build<Domain.Entities.Reservation>()
             .With(e => e.Table, 
             Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create)
             .Create();
+        reservation.Table.CompanyId = companyId;
         await DataContext.Reservations.AddAsync(reservation);
         await DataContext.SaveChangesAsync();
         
         var request = Fixture.Create<UpdateReservation>();
         request.Id = reservation.Id;
+        request.CompanyId = reservation.Table.CompanyId;
         request.TableId = reservation.TableId;
         
         var testHarness = new InMemoryTestHarness();

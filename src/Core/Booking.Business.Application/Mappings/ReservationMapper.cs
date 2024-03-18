@@ -12,7 +12,7 @@ public sealed class ReservationMapper : Profile
         CreateMap<CreateReservation, Domain.Entities.Reservation>();
         CreateMap<Domain.Entities.Reservation, CreateReservationResult>();
 
-        CreateMap<Domain.Entities.Reservation, FullReservationDto>();
+        CreateMap<Domain.Entities.Reservation, ReservationGettingDto>();
 
         CreateMap<UpdateReservation, Domain.Entities.Reservation>();
         CreateMap<Domain.Entities.Reservation, UpdateReservationResult>();

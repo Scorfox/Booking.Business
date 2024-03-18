@@ -33,7 +33,7 @@ namespace Booking.Business.Test.Table
         [Test]
         public async Task GetTablesList()
         {
-            for (int i = 0; i < 5; i++)
+            for (var i = 0; i < 5; i++)
             {
                 var table = Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create();
 
