@@ -9,6 +9,12 @@ public class DataContext : DbContext
     {
         Database.EnsureCreated();
     }
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder
+            .UseLazyLoadingProxies();
+    }
 
     public DbSet<Table> Tables { get; set; } = null!;
     public DbSet<Reservation> Reservations { get; set; } = null!;

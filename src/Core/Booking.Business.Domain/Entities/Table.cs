@@ -10,5 +10,5 @@ public class Table : BaseEntity
     public string Description { get; set; }
     public int SeatsNumber { get; set; }
     
-    public List<Reservation> Reservations { get; set; }
+    public virtual List<Reservation> Reservations { get; set; }
 }
