@@ -9,13 +9,13 @@ namespace Booking.Business.Application.Consumers.Table;
 
 public class CreateTableConsumer : IConsumer<CreateTable>
 {
-    private readonly ITableRepository _tableRepository;
     private readonly IMapper _mapper;
+    private readonly ITableRepository _tableRepository;
 
-    public CreateTableConsumer(ITableRepository tableRepository, IMapper mapper)
+    public CreateTableConsumer(IMapper mapper, ITableRepository tableRepository)
     {
-        _tableRepository = tableRepository;
         _mapper = mapper;
+        _tableRepository = tableRepository;
     }
     
     public async Task Consume(ConsumeContext<CreateTable> context)
@@ -24,7 +24,7 @@ public class CreateTableConsumer : IConsumer<CreateTable>
         
         if (await _tableRepository.HasAnyWithFilialIdAndNameAsync(request.FilialId, request.Name))
             throw new BadRequestException($"Table with NAME {request.Name} and FILIAL {request.FilialId} already exists");
-            
+        
         var filial = _mapper.Map<Domain.Entities.Table>(request);
         
         await _tableRepository.CreateAsync(filial);

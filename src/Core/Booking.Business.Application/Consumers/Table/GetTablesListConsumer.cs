@@ -22,11 +22,12 @@ public class GetTablesListConsumer:IConsumer<GetTablesList>
     {
         var request = context.Message;
 
-        var tables = await _tableRepository.GetPaginatedListAsync(request.Offset, request.Count);
+        var tables = await _tableRepository.GetPaginatedListAsync
+            (request.Offset, request.Count, e => e.FilialId == request.FilialId);
         
         var values = new GetTablesListResult
         {
-            Elements = _mapper.Map<List<FullTableDto>>(tables), 
+            Elements = _mapper.Map<List<TableGettingDto>>(tables), 
             TotalCount = await _tableRepository.GetTotalCount()
         };
 

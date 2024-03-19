@@ -9,15 +9,19 @@ namespace Booking.Business.Application.Consumers.Reservation;
 
 public class CreateReservationConsumer : IConsumer<CreateReservation>
 {
+    private readonly IMapper _mapper;
     private readonly ITableRepository _tableRepository;
     private readonly IReservationRepository _reservationRepository;
-    private readonly IMapper _mapper;
 
-    public CreateReservationConsumer(ITableRepository tableRepository, IReservationRepository reservationRepository, IMapper mapper)
+    public CreateReservationConsumer(
+        IMapper mapper,
+        ITableRepository tableRepository,
+        IReservationRepository reservationRepository
+        )
     {
+        _mapper = mapper;
         _tableRepository = tableRepository;
         _reservationRepository = reservationRepository;
-        _mapper = mapper;
     }
     
     public async Task Consume(ConsumeContext<CreateReservation> context)

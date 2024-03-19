@@ -23,20 +23,21 @@ builder.Services.AddMassTransit(x =>
         cfg.ConfigureEndpoints(context);
 
     });
-        // Table
+    // Table
     x.AddConsumer<CreateTableConsumer>();
-    x.AddConsumer<UpdateTableConsumer>();
-    x.AddConsumer<DeleteTableConsumer>();
     x.AddConsumer<GetTableConsumer>();
     x.AddConsumer<GetTablesListConsumer>();
-
+    x.AddConsumer<UpdateTableConsumer>();
+    x.AddConsumer<DeleteTableConsumer>();
 
     // Reservation
     x.AddConsumer<CreateReservationConsumer>();
-    x.AddConsumer<UpdateReservationConsumer>();
-    x.AddConsumer<DeleteReservationConsumer>();
     x.AddConsumer<GetReservationConsumer>();
     x.AddConsumer<GetReservationsListConsumer>();
+    x.AddConsumer<UpdateReservationConsumer>();
+    
+    x.AddConsumer<CancelReservationConsumer>();
+    x.AddConsumer<ConfirmReservationConsumer>();
 });
 
 var app = builder.Build();

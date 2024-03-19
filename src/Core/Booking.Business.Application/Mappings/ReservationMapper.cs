@@ -9,14 +9,16 @@ public sealed class ReservationMapper : Profile
 {
     public ReservationMapper()
     {
+        // Create
         CreateMap<CreateReservation, Domain.Entities.Reservation>();
         CreateMap<Domain.Entities.Reservation, CreateReservationResult>();
 
-        CreateMap<Domain.Entities.Reservation, FullReservationDto>();
+        // Read
+        CreateMap<Domain.Entities.Reservation, GetReservationResult>();
+        CreateMap<Domain.Entities.Reservation, ReservationGettingDto>();
 
+        // Update
         CreateMap<UpdateReservation, Domain.Entities.Reservation>();
         CreateMap<Domain.Entities.Reservation, UpdateReservationResult>();
-
-        CreateMap<Domain.Entities.Reservation, GetReservationResult>();
     }
 }

@@ -7,15 +7,15 @@ using Otus.Booking.Common.Booking.Exceptions;
 
 namespace Booking.Business.Application.Consumers.Reservation;
 
-public class UpdateReservationConsumer : IConsumer<UpdateReservation>
+public class ConfirmReservationConsumer : IConsumer<ConfirmReservation>
 {
     private readonly IMapper _mapper;
     private readonly IReservationRepository _reservationRepository;
     private readonly ITableRepository _tableRepository;
 
-    public UpdateReservationConsumer(
+    public ConfirmReservationConsumer(
         IMapper mapper,
-        IReservationRepository reservationRepository, 
+        IReservationRepository reservationRepository,
         ITableRepository tableRepository
         )
     {
@@ -24,11 +24,11 @@ public class UpdateReservationConsumer : IConsumer<UpdateReservation>
         _tableRepository = tableRepository;
     }
     
-    public async Task Consume(ConsumeContext<UpdateReservation> context)
+    public async Task Consume(ConsumeContext<ConfirmReservation> context)
     {
         var request = context.Message;
         
-        if (!await _tableRepository.HasAnyByIdAsync(request.TableId))
+        if (await _tableRepository.FindByIdAsync(request.Id) == null)
             throw new NotFoundException($"Table with ID {request.TableId} doesn't exists");
         
         var reservation = await _reservationRepository.FindByIdAsync(request.Id);
@@ -38,11 +38,11 @@ public class UpdateReservationConsumer : IConsumer<UpdateReservation>
         
         if (request.CompanyId != reservation.Table.CompanyId)
             throw new ForbiddenException($"RequestCompanyId {request.CompanyId} is not equal TableCompanyId {reservation.Table.CompanyId}");
-        
-        _mapper.Map(request, reservation);
-        
-        await _reservationRepository.UpdateAsync(reservation!);
 
-        await context.RespondAsync(_mapper.Map<UpdateReservationResult>(reservation));
+        reservation.WhoConfirmedId = request.WhoConfirmedId;
+        
+        await _reservationRepository.UpdateAsync(reservation);
+
+        await context.RespondAsync(_mapper.Map<ConfirmReservationResult>(reservation));
     }
 }

@@ -9,14 +9,16 @@ public sealed class TableMapper : Profile
 {
     public TableMapper()
     {
+        // Create
         CreateMap<CreateTable, Domain.Entities.Table>();
         CreateMap<Domain.Entities.Table, CreateTableResult>();
 
-        CreateMap<Domain.Entities.Table, FullTableDto>();
-
+        // Read
+        CreateMap<Domain.Entities.Table, GetTableResult>();
+        CreateMap<Domain.Entities.Table, TableGettingDto>();
+        
+        // Update
         CreateMap<UpdateTable, Domain.Entities.Table>();
         CreateMap<Domain.Entities.Table, UpdateTableResult>();
-
-        CreateMap<Domain.Entities.Table, GetTableResult>();
     }
 }

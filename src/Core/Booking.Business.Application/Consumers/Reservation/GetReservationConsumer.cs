@@ -26,7 +26,10 @@ public sealed class GetReservationConsumer : IConsumer<GetReservationById>
 
         if (reservation == null)
             throw new NotFoundException($"Reservation with ID {request.Id} doesn't exists");
-
+        
+        if (request.CompanyId != reservation.Table.CompanyId)
+            throw new ForbiddenException($"RequestCompanyId {request.CompanyId} is not equal TableCompanyId {reservation.Table.CompanyId}");
+        
         await context.RespondAsync(_mapper.Map<GetReservationResult>(reservation));
     }
 }

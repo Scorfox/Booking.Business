@@ -7,6 +7,7 @@ using MassTransit;
 using MassTransit.Testing;
 using Microsoft.EntityFrameworkCore;
 using Otus.Booking.Common.Booking.Contracts.Table.Requests;
+using Otus.Booking.Common.Booking.Contracts.Table.Responses;
 
 namespace Booking.Business.Test.Table;
 
@@ -17,9 +18,9 @@ public class CreateTableTests : BaseTest
     public CreateTableTests()
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<TableMapper>());
-        
         var tableRepository = new TableRepository(DataContext);
-        Consumer = new CreateTableConsumer(tableRepository, new Mapper(config));
+        
+        Consumer = new CreateTableConsumer(new Mapper(config), tableRepository);
     }
 
     [Test]
@@ -27,7 +28,7 @@ public class CreateTableTests : BaseTest
     {
         // Arrange
         var testHarness = new InMemoryTestHarness();
-        var consumerHarness = testHarness.Consumer(() => Consumer);
+        testHarness.Consumer(() => Consumer);
         
         await testHarness.Start(); 
         
@@ -38,7 +39,7 @@ public class CreateTableTests : BaseTest
         Assert.Multiple(async () =>
         {
             Assert.That(testHarness.Consumed.Select<CreateTable>().Any(), Is.True);
-            Assert.That(consumerHarness.Consumed.Select<CreateTable>().Any(), Is.True);
+            Assert.That(testHarness.Published.Select<CreateTableResult>().Any(), Is.True);
             Assert.That(await DataContext.Tables.AnyAsync(), Is.True);
         });
         
@@ -50,7 +51,7 @@ public class CreateTableTests : BaseTest
     {
         // Arrange
         var testHarness = new InMemoryTestHarness();
-        var consumerHarness = testHarness.Consumer(() => Consumer);
+        testHarness.Consumer(() => Consumer);
         
         var table = Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create();
 
@@ -69,8 +70,8 @@ public class CreateTableTests : BaseTest
         // Assert
         Assert.Multiple(() =>
         {
+            Assert.That(testHarness.Consumed.Select<CreateTable>().Any(), Is.True);
             Assert.That(testHarness.Published.Select<Fault>().FirstOrDefault(), Is.Not.Null);
-            Assert.That(consumerHarness.Consumed.Select<CreateTable>().Any(), Is.True);
         });
         
         await testHarness.Stop();

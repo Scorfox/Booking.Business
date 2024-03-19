@@ -24,6 +24,9 @@ public class DeleteTableConsumer:IConsumer<DeleteTable>
         if (table == null)
             throw new NotFoundException($"Table with ID {request.Id} doesn't exists");
         
+        if (request.CompanyId != table.CompanyId)
+            throw new ForbiddenException($"RequestCompanyId {request.CompanyId} is not equal TableCompanyId {table.CompanyId}");
+        
         await _tableRepository.Delete(table);
         
         await context.RespondAsync(new DeleteTableResult());

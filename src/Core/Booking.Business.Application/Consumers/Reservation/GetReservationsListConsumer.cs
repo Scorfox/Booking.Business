@@ -9,24 +9,25 @@ namespace Booking.Business.Application.Consumers.Reservation;
 
 public class GetReservationsListConsumer:IConsumer <GetReservationsList>
 {
-    private readonly IReservationRepository _reservationRepository;
     private readonly IMapper _mapper;
+    private readonly IReservationRepository _reservationRepository;
 
-    public GetReservationsListConsumer(IReservationRepository reservationRepository, IMapper mapper)
+    public GetReservationsListConsumer(IMapper mapper, IReservationRepository reservationRepository)
     {
-        _reservationRepository = reservationRepository;
         _mapper = mapper;
+        _reservationRepository = reservationRepository;
     }
 
     public async Task Consume(ConsumeContext<GetReservationsList> context)
     {
         var request = context.Message;
 
-        var reservations = await _reservationRepository.GetPaginatedListAsync(request.Offset, request.Count);
+        var reservations = await _reservationRepository.GetPaginatedListAsync
+            (request.Offset, request.Count, e => e.Table.FilialId == request.FilialId);
         
         await context.RespondAsync(new GetReservationsListResult
         {
-            Elements = _mapper.Map<List<FullReservationDto>>(reservations), 
+            Elements = _mapper.Map<List<ReservationGettingDto>>(reservations), 
             TotalCount = await _reservationRepository.GetTotalCount() 
         });
     }
