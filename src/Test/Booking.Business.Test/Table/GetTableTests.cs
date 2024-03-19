@@ -8,47 +8,45 @@ using MassTransit.Testing;
 using Otus.Booking.Common.Booking.Contracts.Table.Requests;
 using Otus.Booking.Common.Booking.Contracts.Table.Responses;
 
-namespace Booking.Business.Test.Table
+namespace Booking.Business.Test.Table;
+
+public class GetTableTests : BaseTest
 {
-    public class GetTableTests : BaseTest
+    private GetTableConsumer Consumer { get; }
+    private ITableRepository TableRepository { get; }
+
+    public GetTableTests()
     {
-        private GetTableConsumer Consumer { get; }
-        private ITableRepository TableRepository { get; }
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<TableMapper>());
 
-        public GetTableTests()
-        {
-            var config = new MapperConfiguration(cfg => cfg.AddProfile<TableMapper>());
+        TableRepository = new TableRepository(DataContext);
+        Consumer = new GetTableConsumer(TableRepository, new Mapper(config));
+    }
 
-            TableRepository = new TableRepository(DataContext);
-            Consumer = new GetTableConsumer(TableRepository, new Mapper(config));
-        }
+    [Test]
+    public async Task GetTableByIdTest_ReturnsSuccess()
+    {
+        // Arrang
 
-        [Test]
-        public async Task GetTableByIdTest_ReturnsSuccess()
-        {
-            // Arrange
-            var testHarness = new InMemoryTestHarness();
-            testHarness.Consumer(() => Consumer);
-
-            var table = Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create();
-            await TableRepository.CreateAsync(table);
+        var table = Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create();
+        await TableRepository.CreateAsync(table);
             
-            var request = Fixture.Create<GetTableById>();
-            request.Id = table.Id;
+        var request = Fixture.Build<GetTableById>().With(e => e.Id, table.Id).Create();
 
-            await testHarness.Start();
+        var testHarness = new InMemoryTestHarness();
+        testHarness.Consumer(() => Consumer);
+        await testHarness.Start();
 
-            // Act
-            await testHarness.InputQueueSendEndpoint.Send(request);
+        // Act
+        await testHarness.InputQueueSendEndpoint.Send(request);
 
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(testHarness.Consumed.Select<GetTableById>().Any(), Is.True);
-                Assert.That(testHarness.Published.Select<GetTableResult>().Any(), Is.True);
-            });
+        // Assert
+        Assert.Multiple(() =>
+        {
+            Assert.That(testHarness.Consumed.Select<GetTableById>().Any(), Is.True);
+            Assert.That(testHarness.Published.Select<GetTableResult>().Any(), Is.True);
+        });
 
-            await testHarness.Stop();
-        }
+        await testHarness.Stop();
     }
 }

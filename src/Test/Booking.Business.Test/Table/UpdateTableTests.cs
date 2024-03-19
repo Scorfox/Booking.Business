@@ -17,8 +17,8 @@ public class UpdateTableTests : BaseTest
     public UpdateTableTests()
     {
         var config = new MapperConfiguration(cfg => cfg.AddProfile<TableMapper>());
-        
         var companyRepository = new TableRepository(DataContext);
+        
         Consumer = new UpdateTableConsumer(companyRepository, new Mapper(config));
     }
 
@@ -27,18 +27,20 @@ public class UpdateTableTests : BaseTest
     {
         // Arrange
         var companyId = Guid.NewGuid();
-        var table = Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create();
-        table.CompanyId = companyId;
+        var table = Fixture.Build<Domain.Entities.Table>()
+            .Without(e => e.Reservations)
+            .With(e => e.CompanyId, companyId)
+            .Create();
         await DataContext.Tables.AddAsync(table);
         await DataContext.SaveChangesAsync();
-        
-        var request = Fixture.Create<UpdateTable>();
-        request.Id = table.Id;
-        request.CompanyId = companyId;
+
+        var request = Fixture.Build<UpdateTable>()
+            .With(e => e.Id, table.Id)
+            .With(e => e.CompanyId, table.CompanyId)
+            .Create();
         
         var testHarness = new InMemoryTestHarness();
-        var consumerHarness = testHarness.Consumer(() => Consumer);
-        
+        testHarness.Consumer(() => Consumer);
         await testHarness.Start(); 
         
         // Act
@@ -49,7 +51,7 @@ public class UpdateTableTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testHarness.Consumed.Select<UpdateTable>().Any(), Is.True);
-            Assert.That(consumerHarness.Consumed.Select<UpdateTable>().Any(), Is.True);
+            Assert.That(testHarness.Published.Select<UpdateTableResult>().Any(), Is.True);
             Assert.That(table.Name.ToLower(), Is.EqualTo(result?.Name.ToLower()));
         });
         
@@ -60,11 +62,10 @@ public class UpdateTableTests : BaseTest
     public async Task UpdateNotCreatedTable_ReturnsException()
     {
         // Arrange
-        var testHarness = new InMemoryTestHarness();
-        var consumerHarness = testHarness.Consumer(() => Consumer);
-
         var request = Fixture.Create<UpdateTable>();
         
+        var testHarness = new InMemoryTestHarness();
+        testHarness.Consumer(() => Consumer);
         await testHarness.Start(); 
         
         // Act
@@ -73,8 +74,8 @@ public class UpdateTableTests : BaseTest
         // Assert
         Assert.Multiple(() =>
         {
+            Assert.That(testHarness.Consumed.Select<UpdateTable>().Any(), Is.True);
             Assert.That(testHarness.Published.Select<Fault>().FirstOrDefault(), Is.Not.Null);
-            Assert.That(consumerHarness.Consumed.Select<UpdateTable>().Any(), Is.True);
         });
         
         await testHarness.Stop();

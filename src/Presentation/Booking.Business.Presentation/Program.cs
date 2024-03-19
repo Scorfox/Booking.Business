@@ -32,6 +32,7 @@ builder.Services.AddMassTransit(x =>
 
     // Reservation
     x.AddConsumer<CreateReservationConsumer>();
+    x.AddConsumer<GetReservationConsumer>();
     x.AddConsumer<GetReservationsListConsumer>();
     x.AddConsumer<UpdateReservationConsumer>();
     

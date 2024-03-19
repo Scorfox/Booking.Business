@@ -32,6 +32,7 @@ public class UpdateReservationTests : BaseTest
             .With(e => e.Table, 
             Fixture.Build<Domain.Entities.Table>().Without(e => e.Reservations).Create)
             .Create();
+        
         reservation.Table.CompanyId = companyId;
         await DataContext.Reservations.AddAsync(reservation);
         await DataContext.SaveChangesAsync();
@@ -42,7 +43,7 @@ public class UpdateReservationTests : BaseTest
         request.TableId = reservation.TableId;
         
         var testHarness = new InMemoryTestHarness();
-        var consumerHarness = testHarness.Consumer(() => Consumer);
+        testHarness.Consumer(() => Consumer);
         
         await testHarness.Start(); 
         
@@ -54,7 +55,7 @@ public class UpdateReservationTests : BaseTest
         Assert.Multiple(() =>
         {
             Assert.That(testHarness.Consumed.Select<UpdateReservation>().Any(), Is.True);
-            Assert.That(consumerHarness.Consumed.Select<UpdateReservation>().Any(), Is.True);
+            Assert.That(testHarness.Published.Select<UpdateReservationResult>().Any(), Is.True);
             Assert.That(reservation.From, Is.EqualTo(result.From));
             Assert.That(reservation.To, Is.EqualTo(result.To));
             Assert.That(reservation.WhoBookedId, Is.EqualTo(result.WhoBookedId));
@@ -68,7 +69,7 @@ public class UpdateReservationTests : BaseTest
     {
         // Arrange
         var testHarness = new InMemoryTestHarness();
-        var consumerHarness = testHarness.Consumer(() => Consumer);
+        testHarness.Consumer(() => Consumer);
 
         var request = Fixture.Create<UpdateReservation>();
         
@@ -80,8 +81,8 @@ public class UpdateReservationTests : BaseTest
         // Assert
         Assert.Multiple(() =>
         {
+            Assert.That(testHarness.Consumed.Select<UpdateReservation>().Any(), Is.True);
             Assert.That(testHarness.Published.Select<Fault>().FirstOrDefault(), Is.Not.Null);
-            Assert.That(consumerHarness.Consumed.Select<UpdateReservation>().Any(), Is.True);
         });
         
         await testHarness.Stop();

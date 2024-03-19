@@ -22,7 +22,8 @@ public class GetReservationsListConsumer:IConsumer <GetReservationsList>
     {
         var request = context.Message;
 
-        var reservations = await _reservationRepository.GetPaginatedListAsync(request.Offset, request.Count);
+        var reservations = await _reservationRepository.GetPaginatedListAsync
+            (request.Offset, request.Count, e => e.Table.FilialId == request.FilialId);
         
         await context.RespondAsync(new GetReservationsListResult
         {

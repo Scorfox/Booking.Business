@@ -4,6 +4,4 @@ using Booking.Business.Persistence.Context;
 
 namespace Booking.Business.Persistence.Repositories;
 
-public class ReservationRepository(DataContext context) : BaseRepository<Reservation>(context), IReservationRepository
-{
-}
+public class ReservationRepository(DataContext context) : BaseRepository<Reservation>(context), IReservationRepository;

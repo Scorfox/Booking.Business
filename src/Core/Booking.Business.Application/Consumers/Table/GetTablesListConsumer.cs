@@ -23,7 +23,7 @@ public class GetTablesListConsumer:IConsumer<GetTablesList>
         var request = context.Message;
 
         var tables = await _tableRepository.GetPaginatedListAsync
-            (e => e.FilialId == request.FilialId, request.Offset, request.Count);
+            (request.Offset, request.Count, e => e.FilialId == request.FilialId);
         
         var values = new GetTablesListResult
         {

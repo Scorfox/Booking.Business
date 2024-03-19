@@ -50,9 +50,10 @@ public class BaseRepository<T> : IBaseRepository<T> where T : BaseEntity
         return await Context.Set<T>().ToListAsync(cancellationToken);
     }
 
-    public async Task<List<T>> GetPaginatedListAsync(Expression<Func<T, bool>> expression, int offset, int count, CancellationToken token)
+    public async Task<List<T>> GetPaginatedListAsync(int offset, int count, Expression<Func<T, bool>>? expression = null, CancellationToken token = default)
     {
-        return await Context.Set<T>().Where(expression).Skip(offset).Take(count).ToListAsync(token);
+        var queryable = expression == null ? Context.Set<T>() : Context.Set<T>().Where(expression);
+        return await queryable.Skip(offset).Take(count).ToListAsync(token);
     }
 
     public async Task<int> GetTotalCount(CancellationToken token)
