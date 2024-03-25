@@ -1,45 +1,46 @@
-using Booking.Business.Application;
-using Booking.Business.Application.Consumers.Reservation;
-using Booking.Business.Application.Consumers.Table;
-using Booking.Business.Persistence;
-using MassTransit;
+using Booking.Presentation;
+using Serilog;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.ConfigureApplication();
-builder.Services.ConfigurePersistence(builder.Configuration);
-
-builder.Services.AddMassTransit(x =>
+public static class Program
 {
-    // Добавляем шину сообщений
-    x.UsingRabbitMq((context, cfg) =>
+    public static async Task<int> Main(string[] args)
     {
-        cfg.Host(builder.Configuration["RabbitMQ:Host"], h =>
+        try
         {
-            h.Username(builder.Configuration["RabbitMQ:Username"]);
-            h.Password(builder.Configuration["RabbitMQ:Password"]);
-        });
-        
-        cfg.ConfigureEndpoints(context);
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", true)
+                .Build();
 
-    });
-    // Table
-    x.AddConsumer<CreateTableConsumer>();
-    x.AddConsumer<GetTableConsumer>();
-    x.AddConsumer<GetTablesListConsumer>();
-    x.AddConsumer<UpdateTableConsumer>();
-    x.AddConsumer<DeleteTableConsumer>();
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(configuration)
+                .CreateLogger();
 
-    // Reservation
-    x.AddConsumer<CreateReservationConsumer>();
-    x.AddConsumer<GetReservationConsumer>();
-    x.AddConsumer<GetReservationsListConsumer>();
-    x.AddConsumer<UpdateReservationConsumer>();
-    
-    x.AddConsumer<CancelReservationConsumer>();
-    x.AddConsumer<ConfirmReservationConsumer>();
-});
+            Log.Information("Application is starting!");
 
-var app = builder.Build();
-AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-app.Run();
+            var builder = WebApplication.CreateBuilder(args);
+            builder.Host.UseSerilog();
+            var startup = new Startup(builder.Configuration);
+            startup.ConfigureServices(builder.Services);
+
+            var app = builder.Build();
+
+            startup.Configure(app, builder.Environment);
+            await app.RunAsync();
+
+            Log.Information("Application stopped!");
+
+            return 0;
+        }
+        catch (Exception ex)
+        {
+            Log.Fatal(ex, "Host terminated unexpectedly");
+            return 1;
+        }
+        finally
+        {
+            await Log.CloseAndFlushAsync();
+        }
+    }
+}
