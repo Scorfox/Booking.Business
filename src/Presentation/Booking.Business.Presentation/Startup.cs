@@ -1,7 +1,8 @@
 ﻿using Booking.Business.Application.Consumers.Reservation;
 using Booking.Business.Application.Consumers.Table;
+using Booking.Business.Application;
+using Booking.Business.Persistence;
 using MassTransit;
-
 
 namespace Booking.Presentation
 {
@@ -16,6 +17,12 @@ namespace Booking.Presentation
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigurePersistence(Configuration);
+            services.ConfigureApplication(Configuration);
+
+            services.AddControllers();
+            services.AddEndpointsApiExplorer();
+
             services.AddMassTransit(x =>
             {
                 // Добавляем шину сообщений
@@ -30,6 +37,7 @@ namespace Booking.Presentation
                     cfg.ConfigureEndpoints(context);
 
                 });
+
                 // Table
                 x.AddConsumer<CreateTableConsumer>();
                 x.AddConsumer<GetTableConsumer>();
@@ -51,7 +59,8 @@ namespace Booking.Presentation
         public void Configure(WebApplication app, IWebHostEnvironment env)
         {
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-            app.Run();
+            app.UseCors();
+            app.MapControllers();
         }
     }
 }

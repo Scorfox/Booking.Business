@@ -1,9 +1,10 @@
+using Booking.Business.Persistence.Context;
 using Booking.Presentation;
 using Serilog;
 
 public static class Program
 {
-    public static async Task<int> Main(string[] args)
+    private static async Task<int> Main(string[] args)
     {
         try
         {
@@ -23,10 +24,15 @@ public static class Program
             builder.Host.UseSerilog();
             var startup = new Startup(builder.Configuration);
             startup.ConfigureServices(builder.Services);
+            
 
             var app = builder.Build();
-
             startup.Configure(app, builder.Environment);
+
+            var serviceScope = app.Services.CreateScope();
+            var dataContext = serviceScope.ServiceProvider.GetService<DataContext>();
+            dataContext?.Database.EnsureCreated();
+
             await app.RunAsync();
 
             Log.Information("Application stopped!");
