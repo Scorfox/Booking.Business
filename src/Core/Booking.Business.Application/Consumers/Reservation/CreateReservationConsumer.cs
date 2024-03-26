@@ -1,25 +1,40 @@
 ﻿using AutoMapper;
+using Booking.Business.Application.Common.Features.Client;
 using Booking.Business.Application.Repositories;
 using MassTransit;
+using MediatR;
+using Otus.Booking.Common.Booking.Contracts.Company.Requests;
+using Otus.Booking.Common.Booking.Contracts.Company.Responses;
+using Otus.Booking.Common.Booking.Contracts.Filial.Requests;
+using Otus.Booking.Common.Booking.Contracts.Filial.Responses;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Requests;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Responses;
+using Otus.Booking.Common.Booking.Contracts.User.Requests;
+using Otus.Booking.Common.Booking.Contracts.User.Responses;
 using Otus.Booking.Common.Booking.Exceptions;
+using Otus.Booking.Common.Booking.Notifications.Models;
 
 namespace Booking.Business.Application.Consumers.Reservation;
 
 public class CreateReservationConsumer : IConsumer<CreateReservation>
 {
     private readonly IMapper _mapper;
+    private readonly IRequestClient<GetUserById> _userRequestClient;
+    private readonly IRequestClient<GetFilialById> _filialByIdRequestClient;
     private readonly ITableRepository _tableRepository;
     private readonly IReservationRepository _reservationRepository;
 
     public CreateReservationConsumer(
         IMapper mapper,
         ITableRepository tableRepository,
+        IRequestClient<GetUserById> req,
+        IRequestClient<GetFilialById> filial,
         IReservationRepository reservationRepository
-        )
+    )
     {
         _mapper = mapper;
+        _userRequestClient = req;
+        _filialByIdRequestClient = filial;
         _tableRepository = tableRepository;
         _reservationRepository = reservationRepository;
     }
@@ -27,13 +42,35 @@ public class CreateReservationConsumer : IConsumer<CreateReservation>
     public async Task Consume(ConsumeContext<CreateReservation> context)
     {
         var request = context.Message;
-        
-        if (!await _tableRepository.HasAnyByIdAsync(request.TableId))
+
+        var user = await _userRequestClient.GetResponse<GetUserResult>(new GetUserById { Id = request.WhoBookedId });
+        var table = await _tableRepository.FindByIdAsync(request.TableId);
+
+        if (table == null)
             throw new BadRequestException($"Table with ID {request.TableId} doesn't exists");
-            
+
+        var filial =
+            await _filialByIdRequestClient.GetResponse<GetFilialResult>(
+                new GetFilialById {Id = table.FilialId});
+
         var reservation = _mapper.Map<Domain.Entities.Reservation>(request);
         
         await _reservationRepository.CreateAsync(reservation);
+
+        var reservationCreatedNotification = new ReservationCreatedNotification
+        {
+            Email = user.Message.Email,
+            Address = filial.Message.Address,
+            FilialName = filial.Message.Name,
+            FirstName = user.Message.FirstName,
+            LastName = user.Message.LastName,
+            Persons = table.SeatsNumber,
+            TableName = table.Name,
+            From = request.From.DateTime.ToShortDateString() + " - " + request.From.DateTime.ToShortTimeString(),
+            To = request.To.DateTime.ToShortTimeString()
+        };
+
+        await context.Publish(reservationCreatedNotification);
 
         await context.RespondAsync(_mapper.Map<CreateReservationResult>(reservation));
     }

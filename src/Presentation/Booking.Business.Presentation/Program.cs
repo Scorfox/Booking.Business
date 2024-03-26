@@ -38,6 +38,7 @@ builder.Services.AddMassTransit(x =>
     
     x.AddConsumer<CancelReservationConsumer>();
     x.AddConsumer<ConfirmReservationConsumer>();
+
 });
 
 var app = builder.Build();
