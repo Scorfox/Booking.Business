@@ -9,8 +9,4 @@
         <FileVersion>1.0.0325.25257</FileVersion>
     </PropertyGroup>
 
-    <ItemGroup>
-      <PackageReference Include="Otus.Booking.Common" Version="0.0.0-g431c66eea9" />
-    </ItemGroup>
-
 </Project>

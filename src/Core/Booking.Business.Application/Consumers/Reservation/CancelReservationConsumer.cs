@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Booking.Business.Application.Repositories;
-using Booking.Business.Domain.Entities;
 using MassTransit;
 using Otus.Booking.Common.Booking.Contracts.Filial.Requests;
 using Otus.Booking.Common.Booking.Contracts.Filial.Responses;
@@ -24,14 +23,14 @@ public class CancelReservationConsumer : IConsumer<CancelReservation>
     public CancelReservationConsumer(
         IMapper mapper, 
         IReservationRepository reservationRepository,
-        IRequestClient<GetUserById> req,
-        IRequestClient<GetFilialById> filial,
+        IRequestClient<GetUserById> userRequestClient,
+        IRequestClient<GetFilialById> filialByIdRequestClient,
         ITableRepository tableRepository
         )
     {
         _mapper = mapper;
-        _userRequestClient = req;
-        _filialByIdRequestClient = filial;
+        _userRequestClient = userRequestClient;
+        _filialByIdRequestClient = filialByIdRequestClient;
         _reservationRepository = reservationRepository;
         _tableRepository = tableRepository;
     }
@@ -41,12 +40,12 @@ public class CancelReservationConsumer : IConsumer<CancelReservation>
         var request = context.Message;
         var table = await _tableRepository.FindByIdAsync(request.Id);
         if (table == null)
-            throw new NotFoundException($"Table with ID {request.TableId} doesn't exists");
+            throw new NotFoundException($"Table with ID {request.TableId} doesn't exist");
         
         var reservation = await _reservationRepository.FindByIdAsync(request.Id);
         
         if (reservation == null)
-            throw new NotFoundException($"Reservation with ID {request.Id} doesn't exists");
+            throw new NotFoundException($"Reservation with ID {request.Id} doesn't exist");
         
         if (request.CompanyId != reservation.Table.CompanyId)
             throw new ForbiddenException($"RequestCompanyId {request.CompanyId} is not equal TableCompanyId {reservation.Table.CompanyId}");
@@ -61,14 +60,14 @@ public class CancelReservationConsumer : IConsumer<CancelReservation>
         await _reservationRepository.UpdateAsync(reservation);
 
 
-        var reservationStatusNotification = new ReservationStatusNotification()
+        var reservationStatusNotification = new ReservationStatusChangedNotification
         {
             Email = user.Message.Email,
             Address = filial.Message.Address,
             FilialName = filial.Message.Name,
             FirstName = user.Message.FirstName,
             LastName = user.Message.LastName,
-            Persons = table.SeatsNumber,
+            PersonsCount = table.SeatsNumber,
             TableName = table.Name,
             Status = ReservationStatus.Rejected
         };

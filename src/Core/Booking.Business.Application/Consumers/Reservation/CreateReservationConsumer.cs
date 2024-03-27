@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
-using Booking.Business.Application.Common.Features.Client;
 using Booking.Business.Application.Repositories;
 using MassTransit;
-using MediatR;
-using Otus.Booking.Common.Booking.Contracts.Company.Requests;
-using Otus.Booking.Common.Booking.Contracts.Company.Responses;
 using Otus.Booking.Common.Booking.Contracts.Filial.Requests;
 using Otus.Booking.Common.Booking.Contracts.Filial.Responses;
 using Otus.Booking.Common.Booking.Contracts.Reservation.Requests;
@@ -27,14 +23,14 @@ public class CreateReservationConsumer : IConsumer<CreateReservation>
     public CreateReservationConsumer(
         IMapper mapper,
         ITableRepository tableRepository,
-        IRequestClient<GetUserById> req,
-        IRequestClient<GetFilialById> filial,
+        IRequestClient<GetUserById> userRequestClient,
+        IRequestClient<GetFilialById> filialByIdRequestClient,
         IReservationRepository reservationRepository
     )
     {
         _mapper = mapper;
-        _userRequestClient = req;
-        _filialByIdRequestClient = filial;
+        _userRequestClient = userRequestClient;
+        _filialByIdRequestClient = filialByIdRequestClient;
         _tableRepository = tableRepository;
         _reservationRepository = reservationRepository;
     }
@@ -47,7 +43,7 @@ public class CreateReservationConsumer : IConsumer<CreateReservation>
         var table = await _tableRepository.FindByIdAsync(request.TableId);
 
         if (table == null)
-            throw new BadRequestException($"Table with ID {request.TableId} doesn't exists");
+            throw new BadRequestException($"Table with ID {request.TableId} doesn't exist");
 
         var filial =
             await _filialByIdRequestClient.GetResponse<GetFilialResult>(
@@ -64,7 +60,7 @@ public class CreateReservationConsumer : IConsumer<CreateReservation>
             FilialName = filial.Message.Name,
             FirstName = user.Message.FirstName,
             LastName = user.Message.LastName,
-            Persons = table.SeatsNumber,
+            PersonsCount = table.SeatsNumber,
             TableName = table.Name,
             From = request.From.DateTime.ToShortDateString() + " - " + request.From.DateTime.ToShortTimeString(),
             To = request.To.DateTime.ToShortTimeString()

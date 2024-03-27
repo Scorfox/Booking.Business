@@ -23,14 +23,14 @@ public class ConfirmReservationConsumer : IConsumer<ConfirmReservation>
     public ConfirmReservationConsumer(
         IMapper mapper,
         IReservationRepository reservationRepository,
-        IRequestClient<GetUserById> req,
-        IRequestClient<GetFilialById> filial,
+        IRequestClient<GetUserById> userRequestClient,
+        IRequestClient<GetFilialById> filialRequestClient,
         ITableRepository tableRepository
         )
     {
         _mapper = mapper;
-        _userRequestClient = req;
-        _filialByIdRequestClient = filial;
+        _userRequestClient = userRequestClient;
+        _filialByIdRequestClient = filialRequestClient;
         _reservationRepository = reservationRepository;
         _tableRepository = tableRepository;
     }
@@ -42,12 +42,12 @@ public class ConfirmReservationConsumer : IConsumer<ConfirmReservation>
         var table = await _tableRepository.FindByIdAsync(request.Id);
 
         if (table == null)
-            throw new NotFoundException($"Table with ID {request.TableId} doesn't exists");
+            throw new NotFoundException($"Table with ID {request.TableId} doesn't exist");
         
         var reservation = await _reservationRepository.FindByIdAsync(request.Id);
         
         if (reservation == null)
-            throw new NotFoundException($"Reservation with ID {request.Id} doesn't exists");
+            throw new NotFoundException($"Reservation with ID {request.Id} doesn't exist");
         
         if (request.CompanyId != reservation.Table.CompanyId)
             throw new ForbiddenException($"RequestCompanyId {request.CompanyId} is not equal TableCompanyId {reservation.Table.CompanyId}");
@@ -61,14 +61,14 @@ public class ConfirmReservationConsumer : IConsumer<ConfirmReservation>
         
         await _reservationRepository.UpdateAsync(reservation);
 
-        ReservationStatusNotification reservationStatusNotification = new ReservationStatusNotification()
+        var reservationStatusNotification = new ReservationStatusChangedNotification
         {
             Email = user.Message.Email,
             Address = filial.Message.Address,
             FilialName = filial.Message.Name,
             FirstName = user.Message.FirstName,
             LastName = user.Message.LastName,
-            Persons = table.SeatsNumber,
+            PersonsCount = table.SeatsNumber,
             TableName = table.Name,
             Status = ReservationStatus.Confirmed
         };
