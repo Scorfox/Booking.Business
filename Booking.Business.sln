@@ -1,5 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34622.214
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{0BDF877D-844D-4710-856B-A96B85E5E152}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{15DAEFF4-79FB-435E-821E-6146832FB1EE}"
@@ -8,27 +11,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentatio
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{D7A94994-5765-432D-A29C-0B1D9CB1F81A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Business.Application", "src\Core\Booking.Business.Application\Booking.Business.Application.csproj", "{07F29F31-5946-4DCE-8A0A-A62549E21CE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Business.Application", "src\Core\Booking.Business.Application\Booking.Business.Application.csproj", "{07F29F31-5946-4DCE-8A0A-A62549E21CE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Business.Domain", "src\Core\Booking.Business.Domain\Booking.Business.Domain.csproj", "{7E86BC14-3586-4A75-AD34-D18F899FF220}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Business.Domain", "src\Core\Booking.Business.Domain\Booking.Business.Domain.csproj", "{7E86BC14-3586-4A75-AD34-D18F899FF220}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Business.Persistence", "src\Infrastructure\Booking.Business.Persistence\Booking.Business.Persistence.csproj", "{4E85C9E0-1B09-4ABE-B1E3-8166DD8DB4FB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Business.Persistence", "src\Infrastructure\Booking.Business.Persistence\Booking.Business.Persistence.csproj", "{4E85C9E0-1B09-4ABE-B1E3-8166DD8DB4FB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Business.Presentation", "src\Presentation\Booking.Business.Presentation\Booking.Business.Presentation.csproj", "{89581FEF-4356-4831-909F-57FF040F6056}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Business.Presentation", "src\Presentation\Booking.Business.Presentation\Booking.Business.Presentation.csproj", "{89581FEF-4356-4831-909F-57FF040F6056}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Booking.Business.Test", "src\Test\Booking.Business.Test\Booking.Business.Test.csproj", "{24E58E45-EA4E-4E24-B64B-108C258491F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Booking.Business.Test", "src\Test\Booking.Business.Test\Booking.Business.Test.csproj", "{24E58E45-EA4E-4E24-B64B-108C258491F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{07F29F31-5946-4DCE-8A0A-A62549E21CE3} = {0BDF877D-844D-4710-856B-A96B85E5E152}
-		{7E86BC14-3586-4A75-AD34-D18F899FF220} = {0BDF877D-844D-4710-856B-A96B85E5E152}
-		{4E85C9E0-1B09-4ABE-B1E3-8166DD8DB4FB} = {15DAEFF4-79FB-435E-821E-6146832FB1EE}
-		{89581FEF-4356-4831-909F-57FF040F6056} = {AE2C2516-7709-45D7-932C-79E52E7D3D98}
-		{24E58E45-EA4E-4E24-B64B-108C258491F3} = {D7A94994-5765-432D-A29C-0B1D9CB1F81A}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{07F29F31-5946-4DCE-8A0A-A62549E21CE3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -51,5 +47,18 @@ Global
 		{24E58E45-EA4E-4E24-B64B-108C258491F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24E58E45-EA4E-4E24-B64B-108C258491F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24E58E45-EA4E-4E24-B64B-108C258491F3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{07F29F31-5946-4DCE-8A0A-A62549E21CE3} = {0BDF877D-844D-4710-856B-A96B85E5E152}
+		{7E86BC14-3586-4A75-AD34-D18F899FF220} = {0BDF877D-844D-4710-856B-A96B85E5E152}
+		{4E85C9E0-1B09-4ABE-B1E3-8166DD8DB4FB} = {15DAEFF4-79FB-435E-821E-6146832FB1EE}
+		{89581FEF-4356-4831-909F-57FF040F6056} = {AE2C2516-7709-45D7-932C-79E52E7D3D98}
+		{24E58E45-EA4E-4E24-B64B-108C258491F3} = {D7A94994-5765-432D-A29C-0B1D9CB1F81A}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9157CAA4-7FE7-4443-ADE1-95CAE47D222D}
 	EndGlobalSection
 EndGlobal
